@@ -1,11 +1,18 @@
-from __future__ import absolute_import
 import inspect
 
 from typing import Callable, List, Type  # noqa: F401
 
 from . import utils
-from .operators import (BaseType, BooleanType, DateTimeType, NumericType,
-                        SelectMultipleType, SelectType, StringType, TimeType)
+from .operators import (
+    BaseType,
+    BooleanType,
+    DateTimeType,
+    NumericType,
+    SelectMultipleType,
+    SelectType,
+    StringType,
+    TimeType,
+)
 from .utils import fn_name_to_pretty_label
 
 
@@ -20,13 +27,15 @@ class BaseVariables(object):
         methods = inspect.getmembers(cls)
         return [
             {
-                'name': m[0],
-                'label': m[1].label,
-                'field_type': m[1].field_type.name,
-                'options': m[1].options,
-                'params': m[1].params,
-                'public': m[1].public,
-            } for m in methods if getattr(m[1], 'is_rule_variable', False)
+                "name": m[0],
+                "label": m[1].label,
+                "field_type": m[1].field_type.name,
+                "options": m[1].options,
+                "params": m[1].params,
+                "public": m[1].public,
+            }
+            for m in methods
+            if getattr(m[1], "is_rule_variable", False)
         ]
 
 
@@ -47,8 +56,11 @@ def rule_variable(field_type, label=None, options=None, params=None, public=True
 
     def wrapper(func):
         if not (type(field_type) == type and issubclass(field_type, BaseType)):
-            raise AssertionError("{0} is not instance of BaseType in" \
-                                 " rule_variable field_type".format(field_type))
+            raise AssertionError(
+                "{0} is not instance of BaseType in" " rule_variable field_type".format(
+                    field_type
+                )
+            )
 
         params_wrapper = utils.params_dict_to_list(params)
 
@@ -71,7 +83,9 @@ def _rule_variable_wrapper(field_type, label, params=None, options=None, public=
         # Decorator is being called with no args, label is actually the decorated func
         return rule_variable(field_type, params=params, public=public)(label)
 
-    return rule_variable(field_type, label=label, params=params, options=options, public=public)
+    return rule_variable(
+        field_type, label=label, params=params, options=options, public=public
+    )
 
 
 def numeric_rule_variable(label=None, params=None, public=True):
@@ -101,7 +115,9 @@ def string_rule_variable(label=None, params=None, options=None, public=True):
     :param public: Flag to identify if a variable is public or not
     :return: Decorator function wrapper
     """
-    return _rule_variable_wrapper(StringType, label, params=params, options=options, public=public)
+    return _rule_variable_wrapper(
+        StringType, label, params=params, options=options, public=public
+    )
 
 
 def boolean_rule_variable(label=None, params=None, public=True):
@@ -130,7 +146,9 @@ def select_rule_variable(label=None, options=None, params=None, public=True):
     :param public: Flag to identify if a variable is public or not
     :return: Decorator function wrapper
     """
-    return rule_variable(SelectType, label=label, options=options, params=params, public=public)
+    return rule_variable(
+        SelectType, label=label, options=options, params=params, public=public
+    )
 
 
 def select_multiple_rule_variable(label=None, options=None, params=None, public=True):
@@ -145,7 +163,9 @@ def select_multiple_rule_variable(label=None, options=None, params=None, public=
     :param public: Flag to identify if a variable is public or not
     :return: Decorator function wrapper
     """
-    return rule_variable(SelectMultipleType, label=label, options=options, params=params, public=public)
+    return rule_variable(
+        SelectMultipleType, label=label, options=options, params=params, public=public
+    )
 
 
 def datetime_rule_variable(label=None, params=None, public=True):
@@ -160,7 +180,9 @@ def datetime_rule_variable(label=None, params=None, public=True):
     :return: Decorator function wrapper for DateTime values
     """
 
-    return _rule_variable_wrapper(field_type=DateTimeType, label=label, params=params, public=public)
+    return _rule_variable_wrapper(
+        field_type=DateTimeType, label=label, params=params, public=public
+    )
 
 
 def time_rule_variable(label=None, params=None, public=True):
@@ -174,7 +196,9 @@ def time_rule_variable(label=None, params=None, public=True):
     :return: Decorator function wrapper for Time values
     """
 
-    return _rule_variable_wrapper(field_type=TimeType, label=label, params=params, public=public)
+    return _rule_variable_wrapper(
+        field_type=TimeType, label=label, params=params, public=public
+    )
 
 
 def _validate_variable_parameters(func, params):
@@ -189,12 +213,18 @@ def _validate_variable_parameters(func, params):
 
     if params is not None:
         for param in params:
-            param_name, field_type = param['name'], param['field_type']
+            param_name, field_type = param["name"], param["field_type"]
 
             if param_name not in func.__code__.co_varnames:
-                raise AssertionError("Unknown parameter name {0} specified for variable {1}".format(
-                    param_name, func.__name__))
+                raise AssertionError(
+                    "Unknown parameter name {0} specified for variable {1}".format(
+                        param_name, func.__name__
+                    )
+                )
 
             if field_type not in valid_fields:
-                raise AssertionError("Unknown field type {0} specified for variable {1} param {2}".format(
-                    field_type, func.__name__, param_name))
+                raise AssertionError(
+                    "Unknown field type {0} specified for variable {1} param {2}".format(
+                        field_type, func.__name__, param_name
+                    )
+                )

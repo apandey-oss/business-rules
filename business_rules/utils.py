@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import inspect
 from decimal import Context, Decimal, Inexact
 
@@ -6,7 +5,7 @@ from .util import method_type
 
 
 def fn_name_to_pretty_label(name):
-    return ' '.join([w.title() for w in name.split('_')])
+    return " ".join([w.title() for w in name.split("_")])
 
 
 def export_rule_data(variables, actions):
@@ -27,14 +26,16 @@ def export_rule_data(variables, actions):
     variables_data = variables.get_all_variables()
 
     variable_type_operators = {}
-    for variable_class in inspect.getmembers(operators, lambda x: getattr(x, 'export_in_rule_data', False)):
+    for variable_class in inspect.getmembers(
+        operators, lambda x: getattr(x, "export_in_rule_data", False)
+    ):
         variable_type = variable_class[1]  # getmembers returns (name, value)
         variable_type_operators[variable_type.name] = variable_type.get_all_operators()
 
     return {
         "variables": variables_data,
         "actions": actions_data,
-        "variable_type_operators": variable_type_operators
+        "variable_type_operators": variable_type_operators,
     }
 
 
@@ -87,10 +88,11 @@ def params_dict_to_list(params):
 
     return [
         {
-            'label': fn_name_to_pretty_label(name),
-            'name': name,
-            'field_type': param_field_type
-        } for name, param_field_type in params.items()
+            "label": fn_name_to_pretty_label(name),
+            "name": name,
+            "field_type": param_field_type,
+        }
+        for name, param_field_type in params.items()
     ]
 
 
@@ -109,24 +111,32 @@ def check_params_valid_for_method(method, given_params, method_type_name):
     Rule)
     """
     method_params = params_dict_to_list(method.params)
-    defined_params = [param.get('name') for param in method_params]
+    defined_params = [param.get("name") for param in method_params]
     missing_params = set(defined_params).difference(given_params)
 
     # check for default value in action parameters, if it is present, exclude param from missing params
     params_with_default_value = set()
     if method_type_name == method_type.METHOD_TYPE_ACTION and missing_params:
-        params_with_default_value = check_for_default_value_for_missing_params(missing_params, method_params)
+        params_with_default_value = check_for_default_value_for_missing_params(
+            missing_params, method_params
+        )
         missing_params -= params_with_default_value
 
     if missing_params:
-        raise AssertionError("Missing parameters {0} for {1} {2}".format(
-            ', '.join(missing_params), method_type_name, method.__name__))
+        raise AssertionError(
+            "Missing parameters {0} for {1} {2}".format(
+                ", ".join(missing_params), method_type_name, method.__name__
+            )
+        )
 
     invalid_params = set(given_params).difference(defined_params)
 
     if invalid_params:
-        raise AssertionError("Invalid parameters {0} for {1} {2}".format(
-            ', '.join(invalid_params), method_type_name, method.__name__))
+        raise AssertionError(
+            "Invalid parameters {0} for {1} {2}".format(
+                ", ".join(invalid_params), method_type_name, method.__name__
+            )
+        )
 
     return params_with_default_value
 
@@ -148,8 +158,11 @@ def check_for_default_value_for_missing_params(missing_params, method_params):
     missing_params_with_default_value = set()
     if method_params:
         for param in method_params:
-            if param['name'] in missing_params and param.get('defaultValue', None) is not None:
-                missing_params_with_default_value.add(param['name'])
+            if (
+                param["name"] in missing_params
+                and param.get("defaultValue", None) is not None
+            ):
+                missing_params_with_default_value.add(param["name"])
 
     return missing_params_with_default_value
 
@@ -163,35 +176,42 @@ def validate_rule_data(variables, actions, rule):
     :return: bool
     :raises AssertionError:
     """
+
     def validate_root_keys(rule):
         """
         Check the root object contains both 'actions' & 'conditions'
         """
         root_keys = list(rule.keys())
-        if 'actions' not in root_keys:
-            raise AssertionError('Missing "{}" key'.format('actions'))
+        if "actions" not in root_keys:
+            raise AssertionError('Missing "{}" key'.format("actions"))
 
     def validate_condition_operator(condition, rule_schema):
         """
         Check provided condition contains a valid operator
         """
         if "operator" not in condition:
-            raise AssertionError('Missing "operator" key for condition {}'.format(condition.get('name')))
-        for item in rule_schema.get('variables'):
-            if item.get('name') == condition.get('name'):
-                condition_field_type = item.get('field_type')
-                variable_operators = rule_schema.get('variable_type_operators', {}).get(condition_field_type, [])
+            raise AssertionError(
+                'Missing "operator" key for condition {}'.format(condition.get("name"))
+            )
+        for item in rule_schema.get("variables"):
+            if item.get("name") == condition.get("name"):
+                condition_field_type = item.get("field_type")
+                variable_operators = rule_schema.get("variable_type_operators", {}).get(
+                    condition_field_type, []
+                )
                 for operators in variable_operators:
-                    if operators['name'] == condition['operator']:
+                    if operators["name"] == condition["operator"]:
                         return True
-                raise AssertionError('Unknown operator "{}"'.format(condition['operator']))
-        raise AssertionError('Name "{}" not supported'.format(condition.get('name')))
+                raise AssertionError(
+                    'Unknown operator "{}"'.format(condition["operator"])
+                )
+        raise AssertionError('Name "{}" not supported'.format(condition.get("name")))
 
     def validate_condition_name(condition, variables):
         """
         Check provided condition contains a 'name' key and the value is valid
         """
-        condition_name = condition.get('name')
+        condition_name = condition.get("name")
         if not condition_name:
             raise AssertionError('Missing condition "name" key in {}'.format(condition))
         if not hasattr(variables, condition_name):
@@ -200,8 +220,8 @@ def validate_rule_data(variables, actions, rule):
     def validate_condition(condition, variables, rule_schema):
         validate_condition_name(condition, variables)
         validate_condition_operator(condition, rule_schema)
-        method = getattr(variables, condition.get('name'))
-        params = condition.get('params', {})
+        method = getattr(variables, condition.get("name"))
+        params = condition.get("params", {})
         check_params_valid_for_method(method, params, method_type.METHOD_TYPE_VARIABLE)
 
     def validate_conditions(input_conditions, rule_schema):
@@ -215,9 +235,11 @@ def validate_rule_data(variables, actions, rule):
                 validate_conditions(condition, rule_schema)
         if isinstance(input_conditions, dict):
             keys = list(input_conditions.keys())
-            if 'any' in keys or 'all' in keys:
+            if "any" in keys or "all" in keys:
                 if len(keys) > 1:
-                    raise AssertionError('Expected ONE of "any" or "all" but found {}'.format(keys))
+                    raise AssertionError(
+                        'Expected ONE of "any" or "all" but found {}'.format(keys)
+                    )
                 else:
                     for _, v in six.iteritems(input_conditions):
                         validate_conditions(v, rule_schema)
@@ -231,15 +253,17 @@ def validate_rule_data(variables, actions, rule):
         if type(input_actions) is not list:
             raise AssertionError('"actions" key must be a list')
         for action in input_actions:
-            method = getattr(actions, action.get('name'), None)
-            params = action.get('params', {})
-            check_params_valid_for_method(method, params, method_type.METHOD_TYPE_ACTION)
+            method = getattr(actions, action.get("name"), None)
+            params = action.get("params", {})
+            check_params_valid_for_method(
+                method, params, method_type.METHOD_TYPE_ACTION
+            )
 
     rule_schema = export_rule_data(variables, actions)
     validate_root_keys(rule)
-    conditions = rule.get('conditions', None)
+    conditions = rule.get("conditions", None)
     if conditions is not None and type(conditions) is not dict:
         raise AssertionError('"conditions" must be a dictionary')
     validate_conditions(conditions, rule_schema)
-    validate_actions(rule.get('actions'))
+    validate_actions(rule.get("actions"))
     return True

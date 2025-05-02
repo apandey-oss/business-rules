@@ -1,16 +1,14 @@
-from __future__ import absolute_import
 from business_rules import variables
 
 
 class TestVariables(variables.BaseVariables):
-
     @variables.boolean_rule_variable()
     def bool_variable(self):
         return True
 
     @variables.string_rule_variable()
     def str_variable(self):
-        return 'test'
+        return "test"
 
     @variables.select_multiple_rule_variable()
     def select_multiple_variable(self):
