@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import datetime
 
 from business_rules.variables import *
@@ -22,7 +21,7 @@ class ExampleVariables(BaseVariables):
 
     @boolean_rule_variable()
     def rule_variable(self, **kwargs):
-        rule = kwargs.get('rule')
+        rule = kwargs.get("rule")
         return True
 
     @datetime_rule_variable()

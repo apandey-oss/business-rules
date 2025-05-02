@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import logging
 
 from business_rules import run_all
@@ -36,7 +35,7 @@ rules = [
                     "name": "today",
                     "operator": "after_than_or_equal_to",
                     "value": "2017-01-16",
-                }
+                },
             ]
         },
         "actions": [
@@ -44,9 +43,9 @@ rules = [
                 "name": "log",
                 "params": {
                     "message": "All criteria met!",
-                }
+                },
             }
-        ]
+        ],
     },
     {
         "actions": [
@@ -54,14 +53,14 @@ rules = [
                 "name": "log",
                 "params": {
                     "message": "Rule with no conditions triggered!",
-                }
+                },
             }
         ]
-    }
+    },
 ]
 
-hot_drink = Item(code=1, name='Hot Drink', line_number=1, quantity=1)
-pastry = Item(code=2, name='Pastry', line_number=2, quantity=1)
+hot_drink = Item(code=1, name="Hot Drink", line_number=1, quantity=1)
+pastry = Item(code=2, name="Pastry", line_number=2, quantity=1)
 basket = Basket(id=0, items=[hot_drink, pastry])
 run_all(
     rule_list=rules,

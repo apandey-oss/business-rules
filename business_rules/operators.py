@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-# import calendar
 import inspect
 import re
 from datetime import date, datetime, time
@@ -8,9 +6,15 @@ from functools import wraps
 
 from .six import integer_types, string_types
 
-from .fields import (FIELD_DATETIME, FIELD_NO_INPUT, FIELD_NUMERIC,
-                     FIELD_SELECT, FIELD_SELECT_MULTIPLE, FIELD_TEXT,
-                     FIELD_TIME)
+from .fields import (
+    FIELD_DATETIME,
+    FIELD_NO_INPUT,
+    FIELD_NUMERIC,
+    FIELD_SELECT,
+    FIELD_SELECT_MULTIPLE,
+    FIELD_TEXT,
+    FIELD_TIME,
+)
 from .utils import float_to_decimal, fn_name_to_pretty_label
 
 
@@ -24,21 +28,21 @@ class BaseType(object):
     @classmethod
     def get_all_operators(cls):
         methods = inspect.getmembers(cls)
-        return [{'name': m[0],
-                 'label': m[1].label,
-                 'input_type': m[1].input_type}
-                for m in methods if getattr(m[1], 'is_operator', False)]
+        return [
+            {"name": m[0], "label": m[1].label, "input_type": m[1].input_type}
+            for m in methods
+            if getattr(m[1], "is_operator", False)
+        ]
 
 
 def export_type(cls):
-    """ Decorator to expose the given class to business_rules.export_rule_data. """
+    """Decorator to expose the given class to business_rules.export_rule_data."""
     cls.export_in_rule_data = True
     return cls
 
 
-def type_operator(input_type, label=None,
-                  assert_type_for_arguments=True):
-    """ Decorator to make a function into a type operator.
+def type_operator(input_type, label=None, assert_type_for_arguments=True):
+    """Decorator to make a function into a type operator.
 
     - assert_type_for_arguments - if True this patches the operator function
       so that arguments passed to it will have _assert_valid_value_and_cast
@@ -71,8 +75,7 @@ class StringType(BaseType):
     def _assert_valid_value_and_cast(self, value):
         value = value or ""
         if not isinstance(value, string_types):
-            raise AssertionError("{0} is not a valid string type.".
-                                 format(value))
+            raise AssertionError("{0} is not a valid string type.".format(value))
         return value
 
     @type_operator(FIELD_TEXT)
@@ -106,7 +109,7 @@ class StringType(BaseType):
 
 @export_type
 class NumericType(BaseType):
-    EPSILON = Decimal('0.000001')
+    EPSILON = Decimal("0.000001")
 
     name = "numeric"
 
@@ -120,8 +123,7 @@ class NumericType(BaseType):
         if isinstance(value, Decimal):
             return value
         else:
-            raise AssertionError("{0} is not a valid numeric type.".
-                                 format(value))
+            raise AssertionError("{0} is not a valid numeric type.".format(value))
 
     @type_operator(FIELD_NUMERIC)
     def equal_to(self, other_numeric):
@@ -150,8 +152,7 @@ class BooleanType(BaseType):
 
     def _assert_valid_value_and_cast(self, value):
         if type(value) != bool:
-            raise AssertionError("{0} is not a valid boolean type".
-                                 format(value))
+            raise AssertionError("{0} is not a valid boolean type".format(value))
         return value
 
     @type_operator(FIELD_NO_INPUT)
@@ -168,15 +169,15 @@ class SelectType(BaseType):
     name = "select"
 
     def _assert_valid_value_and_cast(self, value):
-        if not hasattr(value, '__iter__'):
-            raise AssertionError("{0} is not a valid select type".
-                                 format(value))
+        if not hasattr(value, "__iter__"):
+            raise AssertionError("{0} is not a valid select type".format(value))
         return value
 
     @staticmethod
     def _case_insensitive_equal_to(value_from_list, other_value):
-        if isinstance(value_from_list, string_types) and \
-                isinstance(other_value, string_types):
+        if isinstance(value_from_list, string_types) and isinstance(
+            other_value, string_types
+        ):
             return value_from_list.lower() == other_value.lower()
         else:
             return value_from_list == other_value
@@ -201,9 +202,10 @@ class SelectMultipleType(BaseType):
     name = "select_multiple"
 
     def _assert_valid_value_and_cast(self, value):
-        if not hasattr(value, '__iter__'):
-            raise AssertionError("{0} is not a valid select multiple type".
-                                 format(value))
+        if not hasattr(value, "__iter__"):
+            raise AssertionError(
+                "{0} is not a valid select multiple type".format(value)
+            )
         return value
 
     @type_operator(FIELD_SELECT_MULTIPLE)
@@ -246,8 +248,8 @@ class SelectMultipleType(BaseType):
 @export_type
 class DateTimeType(BaseType):
     name = "datetime"
-    DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
-    DATE_FORMAT = '%Y-%m-%d'
+    DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+    DATE_FORMAT = "%Y-%m-%d"
 
     def _assert_valid_value_and_cast(self, value):
         """
@@ -315,8 +317,8 @@ class DateTimeType(BaseType):
 @export_type
 class TimeType(BaseType):
     name = "time"
-    TIME_FORMAT = '%H:%M:%S'
-    TIME_FORMAT_NO_SECONDS = '%H:%M'
+    TIME_FORMAT = "%H:%M:%S"
+    TIME_FORMAT_NO_SECONDS = "%H:%M"
 
     def _assert_valid_value_and_cast(self, value):
         """
