@@ -19,7 +19,7 @@ dev = [ "nose2", "mock", "ruff", "python-dateutil" ,"pytest", "pytz"]
 [tool.uv]
 default-groups = ["dev"]
 
-[tool.hatch
+[tool.hatch]
 version.path = "business_rules/__init__.py"
 
 [tool.hatch.build.targets.wheel]
