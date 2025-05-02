@@ -1,8 +1,6 @@
 business-rules
 ==============
 
-[![Build Status](https://travis-ci.com/amitkpandey-in/business-rules.svg?branch=master)](https://travis-ci.com/amitkpandey-in/business-rules)
-
 This is a fork of [yoyowallet/business-rules](https://github.com/yoyowallet/business-rules) which is fork of [venmo/business-rules](https://github.com/venmo/business-rules) from version 1.0.1. [yoyowallet/business-rules](https://github.com/yoyowallet/business-rules) is being maintained, hence forked this.
 
 As a software system grows in complexity and usage, it can become burdensome if
@@ -16,9 +14,6 @@ marketing logic around when certain customers or items are eligible for a
 discount or to automate emails after users enter a certain state or go through
 a particular sequence of events.
 
-<p align="center">
-    <img src="http://cdn.memegenerator.net/instances/400x/36514579.jpg" />
-</p>
 
 ## Usage
 
@@ -442,10 +437,11 @@ A variable can return the following types of values:
 
 ## Contributing
 
-Open up a pull request, making sure to add tests for any new functionality. To set up the dev environment (assuming you're using [virtualenvwrapper](http://docs.python-guide.org/en/latest/dev/virtualenvs/#virtualenvwrapper)):
+## Contributing
+
+Open up a pull request, making sure to add tests for any new functionality. To set up the dev environment (assuming you're using [uv](https://docs.astral.sh/uv/)):
 
 ```bash
-$ mkvirtualenv business-rules
-$ pip install -r dev-requirements.txt
-$ nosetests
+$ uv sync
+$ uv run nose2
 ```

@@ -1,7 +1,0 @@
-ipdb
-ipython
-mock
-nose
-nose-run-line-number
-pytest
-pytest-cov

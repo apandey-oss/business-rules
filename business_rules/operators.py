@@ -1,12 +1,12 @@
 from __future__ import absolute_import
-import calendar
+# import calendar
 import inspect
 import re
 from datetime import date, datetime, time
 from decimal import Decimal
 from functools import wraps
 
-from six import integer_types, string_types
+from .six import integer_types, string_types
 
 from .fields import (FIELD_DATETIME, FIELD_NO_INPUT, FIELD_NUMERIC,
                      FIELD_SELECT, FIELD_SELECT_MULTIPLE, FIELD_TEXT,

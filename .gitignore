@@ -41,3 +41,4 @@ tests/__pycache__/
 .cache/
 business-rules.iml
 .DS_Store
+.venv
