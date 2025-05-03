@@ -4,7 +4,7 @@ from datetime import date, datetime, time
 from decimal import Decimal
 from functools import wraps
 
-from .six import integer_types, string_types
+from six import integer_types, string_types
 
 from .fields import (
     FIELD_DATETIME,

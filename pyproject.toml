@@ -7,7 +7,9 @@ requires-python = ">=3.10,<3.14"
 authors = [{ name = "apandey-oss" }]
 license = { text = "MIT" }
 urls = { Homepage = "https://github.com/apandey-oss/business-rules" }
-dependencies = []
+dependencies = [
+    "six>=1.13.0",
+]
 
 [build-system]
 requires = ["hatchling"]
